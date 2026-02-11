@@ -1,418 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartGym Equipment Price Calculator</title>
-    <style>
-        *{box-sizing:border-box}
-        body{
-            margin:0;
-            min-height:100vh;
-            font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
-            background:radial-gradient(circle at top left,#373737 0,#050608 45%,#000 100%);
-            color:#f5f5f5;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:20px;
-        }
-        .app-shell{
-            width:100%;
-            max-width:1100px;
-            border-radius:24px;
-            background:linear-gradient(135deg,#15161c 0%,#0b0c10 60%,#14110b 100%);
-            box-shadow:0 32px 60px rgba(0,0,0,0.8);
-            padding:24px 28px 32px;
-            color:#e6e6e6;
-        }
-        .app-header-top{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:10px;
-        }
-        .tag-pill{
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            padding:6px 14px;
-            border-radius:999px;
-            background:rgba(255,230,120,0.1);
-            border:1px solid rgba(255,230,120,0.35);
-            font-size:11px;
-            letter-spacing:0.12em;
-            text-transform:uppercase;
-            color:#f6d878;
-        }
-        .tag-dot{
-            width:8px;height:8px;border-radius:50%;
-            background:radial-gradient(circle,#ffe66b 0,#ffb63b 55%,#5b4100 100%);
-            box-shadow:0 0 8px rgba(255,214,94,0.8);
-        }
-        .header-cta{
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            padding:8px 18px;
-            border-radius:999px;
-            background:radial-gradient(circle at 20% 30%,#fff8d0 0,#ffcf54 35%,#ffb428 70%,#7a4b00 100%);
-            box-shadow:0 0 20px rgba(255,214,94,0.8);
-            color:#1a1300;
-            font-size:12px;
-            font-weight:600;
-            text-transform:uppercase;
-            letter-spacing:0.14em;
-        }
-        .header-cta span{font-size:11px;opacity:.75}
-        .app-header-main h1{
-            margin:4px 0 2px;
-            font-size:24px;
-            letter-spacing:0.08em;
-            text-transform:uppercase;
-        }
-        .app-header-main p{
-            margin:0;
-            font-size:12px;
-            color:#9c9c9c;
-        }
-        .app-body{
-            display:flex;
-            gap:20px;
-            margin-top:24px;
-            flex-wrap:wrap;
-        }
-        .column-left,.column-right{flex:1 1 320px;min-width:0}
-        .card{
-            background:radial-gradient(circle at top left,rgba(255,255,255,0.04) 0,rgba(0,0,0,0.9) 60%);
-            border-radius:18px;
-            border:1px solid rgba(255,255,255,0.03);
-            box-shadow:0 18px 35px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.03);
-            padding:18px 18px 20px;
-            margin-bottom:14px;
-        }
-        .card-header{
-            font-size:11px;
-            letter-spacing:0.18em;
-            text-transform:uppercase;
-            color:#b3b3b3;
-            margin-bottom:10px;
-        }
-        .card-label{
-            font-size:12px;
-            letter-spacing:0.16em;
-            text-transform:uppercase;
-            color:#f6d878;
-            margin-bottom:6px;
-        }
-        .card-subtext{
-            font-size:11px;
-            color:#7e7e7e;
-            margin-top:6px;
-        }
-        .input-row{
-            display:flex;
-            justify-content:space-between;
-            align-items:baseline;
-            gap:12px;
-        }
-        .input-big{flex:1;font-size:28px;font-weight:500;color:#fefefe;}
-        .input-big input{
-            width:100%;
-            border:none;
-            outline:none;
-            background:transparent;
-            color:inherit;
-            font:inherit;
-            padding:0;
-        }
-        .input-unit{font-size:12px;text-transform:uppercase;color:#8f8f8f;}
-        .field-grid{
-            display:grid;
-            grid-template-columns:repeat(2,minmax(0,1fr));
-            gap:12px;
-        }
-        .mini-field{
-            background:radial-gradient(circle at top left,rgba(255,255,255,0.04) 0,rgba(0,0,0,0.9) 60%);
-            border-radius:14px;
-            border:1px solid rgba(255,255,255,0.04);
-            padding:12px 13px 12px;
-        }
-        .mini-label{
-            font-size:11px;
-            letter-spacing:0.14em;
-            text-transform:uppercase;
-            color:#c9c9c9;
-            margin-bottom:4px;
-        }
-        .mini-value input{
-            width:100%;
-            border:none;
-            outline:none;
-            background:transparent;
-            color:#fefefe;
-            font-size:16px;
-            font-weight:500;
-            padding:0;
-        }
-        .mini-unit{font-size:11px;color:#7e7e7e;}
-        .actions-row{
-            display:flex;
-            gap:12px;
-            margin-top:18px;
-        }
-        .btn-primary{
-            flex:1;
-            border-radius:999px;
-            border:none;
-            cursor:pointer;
-            padding:12px 10px;
-            background:radial-gradient(circle at 20% 30%,#fff8d0 0,#ffe66b 30%,#ffc93c 60%,#ffb029 100%);
-            box-shadow:0 18px 32px rgba(0,0,0,0.9),0 0 18px rgba(255,214,94,0.8);
-            color:#15120a;
-            font-size:13px;
-            font-weight:700;
-            text-transform:uppercase;
-            letter-spacing:0.18em;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:10px;
-        }
-        .btn-primary-circle{
-            width:16px;height:16px;border-radius:50%;
-            background:#000;
-            box-shadow:0 0 0 3px rgba(255,246,191,0.95);
-        }
-        .btn-secondary{
-            width:110px;
-            border-radius:999px;
-            border:1px solid rgba(255,255,255,0.18);
-            background:radial-gradient(circle at top left,#26272d 0,#131319 60%);
-            color:#d2d2d2;
-            font-size:12px;
-            text-transform:uppercase;
-            letter-spacing:0.16em;
-            cursor:pointer;
-        }
-        .card-highlight{
-            background:radial-gradient(circle at top left,#4b3c11 0,#1e1a0d 35%,#0b0b0a 100%);
-            border-radius:20px;
-            border:1px solid rgba(255,214,94,0.4);
-            box-shadow:0 22px 45px rgba(0,0,0,0.95),0 0 22px rgba(255,214,94,0.45);
-            padding:18px 18px 20px;
-        }
-        .total-label{
-            font-size:11px;
-            letter-spacing:0.18em;
-            text-transform:uppercase;
-            color:#f6d878;
-            margin-bottom:6px;
-        }
-        .total-value{
-            font-size:32px;
-            font-weight:700;
-            color:#ffe570;
-            text-shadow:0 0 16px rgba(255,214,94,0.75);
-        }
-        .total-sub{
-            font-size:11px;
-            color:#e3e3e3;
-            margin-bottom:10px;
-        }
-        .chip{
-            display:inline-flex;
-            align-items:center;
-            padding:4px 10px;
-            border-radius:999px;
-            font-size:10px;
-            text-transform:uppercase;
-            letter-spacing:0.16em;
-            background:rgba(0,0,0,0.4);
-            border:1px solid rgba(255,255,255,0.1);
-            color:#f1d57a;
-        }
-        .result-grid{
-            display:grid;
-            grid-template-columns:repeat(2,minmax(0,1fr));
-            gap:10px;
-            margin-top:14px;
-        }
-        .stat-card{
-            background:radial-gradient(circle at top left,rgba(0,0,0,0.6) 0,rgba(0,0,0,0.95) 70%);
-            border-radius:14px;
-            border:1px solid rgba(255,255,255,0.08);
-            padding:10px 12px 11px;
-            font-size:11px;
-        }
-        .stat-label{
-            text-transform:uppercase;
-            letter-spacing:0.16em;
-            color:#d7d7d7;
-            margin-bottom:4px;
-        }
-        .stat-number{
-            font-size:14px;
-            font-weight:600;
-            color:#ffe66b;
-        }
-        .stat-small{font-size:11px;color:#b0b0b0;}
-        .result-footer{
-            margin-top:14px;
-            border-top:1px solid rgba(255,255,255,0.08);
-            padding-top:10px;
-            font-size:11px;
-            color:#c7c7c7;
-        }
-        .result-footer span{color:#ffe66b;}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartGym Equipment Price Calculator</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+min-height:100vh;
+font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+background:radial-gradient(circle at top left,#373737 0,#050608 45%,#000 100%);
+color:#f5f5f5;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+.app-shell{
+width:100%;
+max-width:1100px;
+border-radius:24px;
+background:linear-gradient(135deg,#15161c 0%,#0b0c10 60%,#14110b 100%);
+box-shadow:0 32px 60px rgba(0,0,0,0.8);
+padding:24px 28px 32px;
+color:#e6e6e6;
+}
+.app-header-main h1{
+margin:4px 0 2px;
+font-size:24px;
+letter-spacing:0.08em;
+text-transform:uppercase;
+}
+.app-body{
+display:flex;
+gap:20px;
+margin-top:24px;
+flex-wrap:wrap;
+}
+.column-left,.column-right{flex:1 1 320px;}
+.card{
+background:radial-gradient(circle at top left,rgba(255,255,255,0.04) 0,rgba(0,0,0,0.9) 60%);
+border-radius:18px;
+border:1px solid rgba(255,255,255,0.03);
+padding:18px;
+margin-bottom:14px;
+}
+.field-grid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:12px;
+}
+.mini-field{
+background:radial-gradient(circle at top left,rgba(255,255,255,0.04) 0,rgba(0,0,0,0.9) 60%);
+border-radius:14px;
+border:1px solid rgba(255,255,255,0.04);
+padding:12px;
+}
+input{
+width:100%;
+border:none;
+outline:none;
+background:transparent;
+color:#fff;
+font-size:16px;
+}
+.actions-row{
+display:flex;
+gap:12px;
+margin-top:18px;
+}
+.btn-primary{
+flex:1;
+border-radius:999px;
+border:none;
+cursor:pointer;
+padding:12px;
+background:radial-gradient(circle at 20% 30%,#fff8d0 0,#ffe66b 30%,#ffc93c 60%,#ffb029 100%);
+font-weight:700;
+}
+.btn-secondary{
+width:110px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,0.18);
+background:#131319;
+color:#d2d2d2;
+cursor:pointer;
+}
+.card-highlight{
+background:radial-gradient(circle at top left,#4b3c11 0,#1e1a0d 35%,#0b0b0a 100%);
+border-radius:20px;
+border:1px solid rgba(255,214,94,0.4);
+padding:18px;
+}
+.total-value{
+font-size:32px;
+font-weight:700;
+color:#ffe570;
+}
+.stat-card{margin-top:8px;}
+</style>
 </head>
+
 <body>
+
 <div class="app-shell">
-    <div class="app-header-top">
-        <div class="tag-pill"><div class="tag-dot"></div><span>SmartGym Price Engine</span></div>
-        <div class="header-cta"><span>Default currency:</span><strong>₹ INR</strong></div>
-    </div>
 
-    <div class="app-header-main">
-        <h1>Equipment Price Targets</h1>
-        <p>Enter base price and transportation to get the final client price with GST and profit.</p>
-    </div>
+<div class="app-header-main">
+<h1>Equipment Price Targets</h1>
+<p>Enter base price and transportation to get final client price.</p>
+</div>
 
-    <div class="app-body">
-        <!-- LEFT INPUT -->
-        <div class="column-left">
-            <div class="card">
-                <div class="card-header">Input setup</div>
-                <div class="card-label">Base price</div>
-                <div class="input-row">
-                    <div class="input-big">
-                        <input type="number" id="basePrice" placeholder="0.00">
-                    </div>
-                    <div class="input-unit">₹ / order</div>
-                </div>
-                <div class="card-subtext">Enter your ex-factory cost.</div>
-            </div>
+<div class="app-body">
 
-            <div class="field-grid">
-                <div class="mini-field">
-                    <div class="mini-label">Transportation</div>
-                    <div class="mini-value">
-                        <input type="number" id="transportation" placeholder="0.00">
-                    </div>
-                    <div class="mini-unit">Delivery & installation.</div>
-                </div>
-                <div class="mini-field">
-                    <div class="mini-label">Buyer GST</div>
-                    <div class="mini-unit">Fixed at 18%.</div>
-                </div>
-                <div class="mini-field">
-                    <div class="mini-label">Profit margin</div>
-                    <div class="mini-unit">Fixed at 20%.</div>
-                </div>
-                <div class="mini-field">
-                    <div class="mini-label">Our GST</div>
-                    <div class="mini-unit">Fixed at 18%.</div>
-                </div>
-            </div>
+<!-- LEFT -->
+<div class="column-left">
 
-            <div class="actions-row">
-                <button class="btn-primary" onclick="calculatePrice()">
-                    <div class="btn-primary-circle"></div>Calculate price
-                </button>
-                <button class="btn-secondary" type="button" onclick="resetForm()">Reset</button>
-            </div>
-        </div>
+<div class="card">
+<div>Base price</div>
+<input type="number" id="basePrice" placeholder="0.00">
+</div>
 
-        <!-- RIGHT RESULTS -->
-        <div class="column-right">
-            <div class="card-highlight">
-                <div class="total-label">Final client price</div>
-                <div class="total-value">₹ <span id="finalPrice">0.00</span></div>
-                <div class="total-sub">Total including GST & transportation.</div>
-                <div class="chip">Optimized for selling price</div>
+<div class="field-grid">
 
-                <div class="result-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Base price</div>
-                        <div class="stat-number">₹ <span id="basePriceResult">0.00</span></div>
-                        <div class="stat-small">Without GST</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Buyer GST 18%</div>
-                        <div class="stat-number">₹ <span id="buyerGst">0.00</span></div>
-                        <div class="stat-small">GST added to base</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">After buyer GST</div>
-                        <div class="stat-number">₹ <span id="afterBuyerGst">0.00</span></div>
-                        <div class="stat-small">Base + buyer GST</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Profit 20%</div>
-                        <div class="stat-number">₹ <span id="profitAmount">0.00</span></div>
-                        <div class="stat-small">Your earnings</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Amount after profit</div>
-                        <div class="stat-number">₹ <span id="afterProfit">0.00</span></div>
-                        <div class="stat-small">GST applied next</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Our GST 18%</div>
-                        <div class="stat-number">₹ <span id="ourGst">0.00</span></div>
-                        <div class="stat-small">On profit-adjusted value</div>
-                    </div>
-                </div>
+<div class="mini-field">
+<div>Transportation</div>
+<input type="number" id="transportation" placeholder="0.00">
+</div>
 
-                <div class="result-footer">
-                    Total amount also includes transportation cost: <span id="transportAdd">0.00</span>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="mini-field">
+<div>Buyer GST</div>
+<div>Fixed at 18%</div>
+</div>
+
+<!-- EDITABLE PROFIT -->
+<div class="mini-field">
+<div>Profit margin</div>
+<input type="number" id="profitMargin" value="20">
+<div>%</div>
+</div>
+
+<div class="mini-field">
+<div>Our GST</div>
+<div>Fixed at 18%</div>
+</div>
+
+</div>
+
+<div class="actions-row">
+<button class="btn-primary" onclick="calculatePrice()">Calculate price</button>
+<button class="btn-secondary" onclick="resetForm()">Reset</button>
+</div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="column-right">
+
+<div class="card-highlight">
+
+<div>Final client price</div>
+<div class="total-value">₹ <span id="finalPrice">0.00</span></div>
+
+<div class="stat-card">Base price: ₹ <span id="basePriceResult">0.00</span></div>
+<div class="stat-card">Buyer GST: ₹ <span id="buyerGst">0.00</span></div>
+<div class="stat-card">After Buyer GST: ₹ <span id="afterBuyerGst">0.00</span></div>
+<div class="stat-card">Profit: ₹ <span id="profitAmount">0.00</span></div>
+<div class="stat-card">After Profit: ₹ <span id="afterProfit">0.00</span></div>
+<div class="stat-card">Our GST: ₹ <span id="ourGst">0.00</span></div>
+<div class="stat-card">Transport Added: ₹ <span id="transportAdd">0.00</span></div>
+
+</div>
+
+</div>
+
+</div>
 </div>
 
 <script>
-function calculatePrice() {
 
-    const base = parseFloat(document.getElementById("basePrice").value) || 0;
-    const transport = parseFloat(document.getElementById("transportation").value) || 0;
+function calculatePrice(){
 
-    // Step 1: Buyer GST 18%
-    const buyerGst = base * 0.18;
-    const afterBuyerGst = base + buyerGst;
+const base = parseFloat(document.getElementById("basePrice").value)||0;
+const transport = parseFloat(document.getElementById("transportation").value)||0;
+const profitPercent=(parseFloat(document.getElementById("profitMargin").value)||0)/100;
 
-    // Step 2: Profit 20%
-    const profit = afterBuyerGst * 0.20;
-    const afterProfit = afterBuyerGst + profit;
+const buyerGst=base*0.18;
+const afterBuyerGst=base+buyerGst;
 
-    // Step 3: Our GST 18%
-    const ourGst = afterProfit * 0.18;
+const profit=afterBuyerGst*profitPercent;
+const afterProfit=afterBuyerGst+profit;
 
-    // Step 4: Final Price
-    const finalPrice = afterProfit + ourGst + transport;
+const ourGst=afterProfit*0.18;
 
-    // Display values
-    document.getElementById("basePriceResult").innerText = base.toFixed(2);
-    document.getElementById("buyerGst").innerText = buyerGst.toFixed(2);
-    document.getElementById("afterBuyerGst").innerText = afterBuyerGst.toFixed(2);
-    document.getElementById("profitAmount").innerText = profit.toFixed(2);
-    document.getElementById("afterProfit").innerText = afterProfit.toFixed(2);
-    document.getElementById("ourGst").innerText = ourGst.toFixed(2);
-    document.getElementById("transportAdd").innerText = transport.toFixed(2);
+const finalPrice=afterProfit+ourGst+transport;
 
-    document.getElementById("finalPrice").innerText = finalPrice.toFixed(2);
+document.getElementById("basePriceResult").innerText=base.toFixed(2);
+document.getElementById("buyerGst").innerText=buyerGst.toFixed(2);
+document.getElementById("afterBuyerGst").innerText=afterBuyerGst.toFixed(2);
+document.getElementById("profitAmount").innerText=profit.toFixed(2);
+document.getElementById("afterProfit").innerText=afterProfit.toFixed(2);
+document.getElementById("ourGst").innerText=ourGst.toFixed(2);
+document.getElementById("transportAdd").innerText=transport.toFixed(2);
+document.getElementById("finalPrice").innerText=finalPrice.toFixed(2);
+
 }
 
-function resetForm() {
-    document.getElementById("basePrice").value = "";
-    document.getElementById("transportation").value = "";
-    document.getElementById("finalPrice").innerText = "0.00";
+function resetForm(){
+document.getElementById("basePrice").value="";
+document.getElementById("transportation").value="";
+document.getElementById("profitMargin").value="20";
+document.getElementById("finalPrice").innerText="0.00";
 
-    const fields = ["basePriceResult","buyerGst","afterBuyerGst","profitAmount","afterProfit","ourGst","transportAdd"];
-    fields.forEach(id => document.getElementById(id).innerText = "0.00");
+["basePriceResult","buyerGst","afterBuyerGst","profitAmount","afterProfit","ourGst","transportAdd"]
+.forEach(id=>document.getElementById(id).innerText="0.00");
 }
+
 </script>
 
 </body>
